@@ -70,7 +70,7 @@ impl From<&str> for Warehouse {
 }
 
 impl Warehouse {
-	pub fn apply_str_operations(&mut self, operations: &str, mover: fn(&mut Warehouse, count: u32, source: u32, destination: u32)) {
+	pub fn apply_str_operations(&mut self, operations: &str, mover: fn(&mut Warehouse, count: u32, source: usize, destination: usize)) {
 		for operation in operations.lines() {
 			let mut operation_parts = operation.split_whitespace();
 			operation_parts.next();
@@ -79,22 +79,22 @@ impl Warehouse {
 			let source = operation_parts.next().unwrap().parse::<u32>().unwrap() - 1;
 			operation_parts.next();
 			let destination = operation_parts.next().unwrap().parse::<u32>().unwrap() - 1;
-			mover(self, count, source, destination);
+			mover(self, count, source as usize, destination as usize);
 		}
 	}
 
-	fn crate_mover_9000(&mut self, count: u32, source: u32, destination: u32) {
+	fn crate_mover_9000(&mut self, count: u32, source: usize, destination: usize) {
 		for _ in 0..count {
-			let c = self.stacks[source as usize].pop().unwrap();
-			self.stacks[destination as usize].push(c);
+			let c = self.stacks[source].pop().unwrap();
+			self.stacks[destination].push(c);
 		}
 	}
 
-	fn crate_mover_9001(&mut self, count: u32, source: u32, destination: u32) {
-		let index = self.stacks[destination as usize].cargos.len();
+	fn crate_mover_9001(&mut self, count: u32, source: usize, destination: usize) {
+		let index = self.stacks[destination].cargos.len();
 		for _ in 0..count {
-			let c = self.stacks[source as usize].pop().unwrap();
-			self.stacks[destination as usize].insert_at(c, index);
+			let c = self.stacks[source].pop().unwrap();
+			self.stacks[destination].insert_at(c, index);
 		}
 	}
 
@@ -107,7 +107,7 @@ impl Warehouse {
 	}
 }
 
-fn get_movement_result(input: &str, mover: fn(&mut Warehouse, count: u32, source: u32, destination: u32)) -> Option<String> {
+fn get_movement_result(input: &str, mover: fn(&mut Warehouse, count: u32, source: usize, destination: usize)) -> Option<String> {
 	let mut split = input.split("\n\n");
     let stack_input = split.next().unwrap();
 
